@@ -9,6 +9,6 @@ public class Main {
 
         InitialWizard wizard = new InitialWizard();
         wizard.start();
-
+        Liker liker = wizard.getLiker();
     }
 }

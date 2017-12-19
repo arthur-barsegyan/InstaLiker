@@ -6,6 +6,7 @@ import org.jinstagram.auth.oauth.InstagramService;
 import org.jinstagram.exceptions.InstagramException;
 
 import java.util.Scanner;
+import java.util.function.Function;
 
 public class InitialWizard {
     private static String CLIENT_ID = "222f02e5be0f49698e5e3e736677ebfc";
@@ -14,7 +15,6 @@ public class InitialWizard {
     private static final Token EMPTY_TOKEN = null;
 
     private Scanner reader;
-
     private Instagram instagram;
 
     public InitialWizard() {
@@ -40,13 +40,53 @@ public class InitialWizard {
         System.out.println("[Success]");
     }
 
+    private Object getUserInput(String text, Function<String, Object> validator) {
+        String userInput = null;
+
+        while (true) {
+            System.out.print(text);
+            userInput = reader.nextLine();
+
+            Object retVal = validator.apply(userInput);
+            if (retVal != null)
+                return retVal;
+        }
+    }
+
     public Liker getLiker() {
         System.out.println("[Configure your liker]");
         Liker liker = new Liker(instagram);
 
-        System.out.println("Enter target hash tag: #");
-        /* Хештег + Кол-во лайков (если на фото больше лайков чем задано
-         , то не ставим лайк + таймер (от 50 - 60 секунд) + кол-во лайков (с ограничением) */
+        String targetHashTag = (String) getUserInput("Enter target hash tag: #", input -> {
+            if (input.isEmpty())
+                return null;
+
+            return true;
+        });
+        liker.setTargetHashTag(targetHashTag);
+
+        Function<String, Object> digitValidator = input -> {
+            try {
+                Integer threshold = Integer.parseInt(input);
+                if (threshold > 0)
+                    return threshold;
+            } catch (NumberFormatException e) {
+                return null;
+            }
+
+            return null;
+        };
+
+        Integer likeThreshold = (Integer) getUserInput("Enter likes threshold for media: ", digitValidator);
+        liker.setLikeThreshold(likeThreshold);
+
+        Integer likesCount = (Integer) getUserInput("Enter total count of likes: ", digitValidator);
+        liker.setLikesCount(likesCount);
+
+        return liker;
+        /* Хештег + Кол-во лайков (если на фото больше лайков чем задано,
+          то не ставим лайк) + таймер (от 50 - 60 секунд) + одного и того же пользователя больше одного раза
+          лайкать нельзя + кол-во лайков (с ограничением) */
     }
 
 
