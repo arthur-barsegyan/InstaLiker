@@ -1,0 +1,7 @@
+/.idea
+/target
+/out
+*.iml
+**/.DS_Store
+/lib
+**/view_unused
