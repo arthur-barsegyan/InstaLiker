@@ -1,5 +1,10 @@
+package ru.nsu.instaliker;
+
 import org.jinstagram.Instagram;
 
+/* Хештег + Кол-во лайков (если на фото больше лайков чем задано,
+  то не ставим лайк) + таймер (от 50 - 60 секунд) + одного и того же пользователя больше одного раза
+  лайкать нельзя + кол-во лайков (с ограничением) */
 public class Liker {
     private Instagram instagram;
     private String targetHashTag;
@@ -19,7 +24,9 @@ public class Liker {
         this.likeThreshold = likeThreshold;
     }
 
-    public void setLikesCount(Integer likesCount) {
+    void setLikesCount(Integer likesCount) {
         this.likesCount = likesCount;
     }
+
+
 }

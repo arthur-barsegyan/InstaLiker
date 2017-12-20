@@ -1,51 +1,51 @@
+package ru.nsu.instaliker;
+
 import org.jinstagram.Instagram;
 import org.jinstagram.auth.InstagramAuthService;
 import org.jinstagram.auth.model.Token;
 import org.jinstagram.auth.model.Verifier;
 import org.jinstagram.auth.oauth.InstagramService;
-import org.jinstagram.exceptions.InstagramException;
+import ru.nsu.instaliker.view.ConsoleView;
 
-import java.util.Scanner;
 import java.util.function.Function;
 
-public class InitialWizard {
+public class Wizard {
     private static String CLIENT_ID = "222f02e5be0f49698e5e3e736677ebfc";
     private static String CLIENT_SECRET = "cef279e0d7dd4f39bf252a7edbeedcb9";
 
     private static final Token EMPTY_TOKEN = null;
 
-    private Scanner reader;
+    private ConsoleView view;
     private Instagram instagram;
 
-    public InitialWizard() {
-        reader = new Scanner(System.in);
-    }
-
-    public void start() throws InstagramException {
+    Instagram initAuthorization(ConsoleView view) {
         InstagramService service = new InstagramAuthService().apiKey(CLIENT_ID)
                                                             .apiSecret(CLIENT_SECRET)
                                                             .callback("http://localhost")
                                                             .scope("likes")
                                                             .build();
 
-        System.out.println("[Authorization]");
+        view.printString("[Authorization]");
         String authorizationUrl = service.getAuthorizationUrl();
-        System.out.println("Insert this URL in browser address line: " + authorizationUrl);
-        System.out.print("Enter response code from response: ");
+        view.printString("Insert this URL in browser address line: " + authorizationUrl);
+        view.printString("Enter response code from response: ");
 
-        String code = reader.nextLine();
+        String code = view.readString();
         Verifier verifier = new Verifier(code);
         Token accessToken = service.getAccessToken(verifier);
+
         instagram = new Instagram(accessToken);
-        System.out.println("[Success]");
+        view.printString("[Success]");
+
+        return instagram;
     }
 
     private Object getUserInput(String text, Function<String, Object> validator) {
         String userInput = null;
 
         while (true) {
-            System.out.print(text);
-            userInput = reader.nextLine();
+            view.printString(text);
+            userInput = view.readString();
 
             Object retVal = validator.apply(userInput);
             if (retVal != null)
@@ -53,7 +53,7 @@ public class InitialWizard {
         }
     }
 
-    public Liker getLiker() {
+    Liker getLiker() {
         System.out.println("[Configure your liker]");
         Liker liker = new Liker(instagram);
 
@@ -84,9 +84,10 @@ public class InitialWizard {
         liker.setLikesCount(likesCount);
 
         return liker;
-        /* Хештег + Кол-во лайков (если на фото больше лайков чем задано,
-          то не ставим лайк) + таймер (от 50 - 60 секунд) + одного и того же пользователя больше одного раза
-          лайкать нельзя + кол-во лайков (с ограничением) */
+    }
+
+    void setView(ConsoleView view) {
+        this.view = view;
     }
 
 
