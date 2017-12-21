@@ -17,7 +17,6 @@ public class Manager extends Thread {
     private BlockingQueue<Liker> activeTasks = new ArrayBlockingQueue<>(10);
 //    private ArrayList<Liker> executedTasks = new ArrayList<>();
 
-
     public Manager(Wizard wizard) {
         this.wizard = wizard;
     }
@@ -36,13 +35,18 @@ public class Manager extends Thread {
                     activeTasks.wait();
                 }
             } catch (InterruptedException e) {
-                if ((currentTask != null && currentTask.isPaused()) || activeTasks.size() == 0)
+                if ((currentTask == null || (currentTask != null && currentTask.isPaused())) &&
+                        activeTasks.size() == 0)
                     continue;
             }
 
             try {
-                currentTask = activeTasks.take();
-                currentTask.run();
+                if (currentTask != null)
+                    currentTask.run();
+                else {
+                    currentTask = activeTasks.take();
+                    currentTask.run();
+                }
             } catch (Exception e) {
                 System.out.println("MANAGER: " + e.getMessage());
             }
@@ -71,7 +75,11 @@ public class Manager extends Thread {
 
     public boolean pauseCurrentTask() {
         if (currentTask != null) {
-            currentTask.pause();
+            synchronized (currentTask) {
+                currentTask.pause();
+                this.interrupt();
+            }
+
             return true;
         }
 
@@ -80,12 +88,29 @@ public class Manager extends Thread {
 
     public void quit() {
         isEnd.set(true);
-        currentTask.cancel();
+        cancelCurrentTask();
     }
 
     public boolean cancelCurrentTask() {
         if (currentTask != null) {
-            currentTask.cancel();
+            synchronized (currentTask) {
+                currentTask.cancel();
+                this.interrupt();
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public boolean resumeCurrentTask() {
+        if (currentTask != null) {
+            synchronized (currentTask) {
+                currentTask.resume();
+                this.interrupt();
+            }
+
             return true;
         }
 
