@@ -21,7 +21,7 @@ public class ConsoleView extends Thread {
     }
 
     @Override
-    public synchronized void start() {
+    public void run() {
         boolean isEnd = false;
         while (!isEnd) {
             System.out.print("Enter command > ");
@@ -32,9 +32,31 @@ public class ConsoleView extends Thread {
                     for (Iterator<Liker> it = likers.iterator(); it.hasNext(); )
                         System.out.println("\t" + it.next());
                     break;
-
+                case "new":
+                    manager.addTask();
+                    break;
+                case "pause":
+                    if (manager.pauseCurrentTask())
+                        System.out.println("Paused current task");
+                    else
+                        System.out.println("You don't have active task!");
+                    break;
+                case "resume":
+                    manager.resumeCurrentTask();
+                    break;
+                case "remove":
+                    if (manager.cancelCurrentTask())
+                        System.out.println("Canceled current task");
+                    else
+                        System.out.println("You don't have active task!");
+                    break;
+                case "exit":
+                    System.out.println("Do you really want to exit? (Y/N)");
+                    if (readString().equals("Y"))
+                        manager.quit();
+                    break;
                 default:
-
+                    System.out.println("Unrecognized command! Please try again");
             }
         }
     }
