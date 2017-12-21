@@ -25,9 +25,9 @@ public class Wizard {
                                                             .scope("likes")
                                                             .build();
 
-        view.printString("[Authorization]");
+        view.printlnString("[Authorization]");
         String authorizationUrl = service.getAuthorizationUrl();
-        view.printString("Insert this URL in browser address line: " + authorizationUrl);
+        view.printlnString("Insert this URL in browser address line: " + authorizationUrl);
         view.printString("Enter response code from response: ");
 
         String code = view.readString();
@@ -35,7 +35,7 @@ public class Wizard {
         Token accessToken = service.getAccessToken(verifier);
 
         instagram = new Instagram(accessToken);
-        view.printString("[Success]");
+        view.printlnString("[Success]");
 
         return instagram;
     }
@@ -61,7 +61,7 @@ public class Wizard {
             if (input.isEmpty())
                 return null;
 
-            return true;
+            return input;
         });
         liker.setTargetHashTag(targetHashTag);
 
