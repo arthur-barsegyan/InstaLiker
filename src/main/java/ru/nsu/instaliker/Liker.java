@@ -19,6 +19,7 @@ import java.util.Random;
   лайкать нельзя + кол-во лайков (с ограничением) */
 public class Liker implements Runnable {
     private static int SLEEP_TIMEOUT = 50000;
+    private WaitingMode waitingMode;
     private Logger logger = null;
 
     private Instagram instagram;
@@ -31,7 +32,12 @@ public class Liker implements Runnable {
         return likedMedia;
     }
 
-    enum LikerState {
+    public enum WaitingMode {
+        WAITING,
+        NONWAITING
+    }
+
+    private enum LikerState {
         PAUSED,
         ACTIVE,
         CANCELED
@@ -51,6 +57,12 @@ public class Liker implements Runnable {
 
     public Liker(Instagram instagram) {
         this.instagram = instagram;
+        this.waitingMode = WaitingMode.WAITING;
+    }
+
+    public Liker(Instagram instagram, WaitingMode waitingMode) {
+        this.instagram = instagram;
+        this.waitingMode = waitingMode;
     }
 
     public void setTargetHashTag(String targetHashTag) {
@@ -113,11 +125,13 @@ public class Liker implements Runnable {
                         likedMedia.add(feedData.getId());
                         System.out.println(feedData.getLink());
 
-                        try {
-                            int randomDigit = random.nextInt(10);
-                            Thread.sleep(SLEEP_TIMEOUT + randomDigit * 1000);
-                            logger.debug("Sleep time: " + (SLEEP_TIMEOUT + randomDigit * 1000));
-                        } catch (InterruptedException ignored) {}
+                        if (waitingMode == WaitingMode.WAITING) {
+                            try {
+                                int randomDigit = random.nextInt(10);
+                                Thread.sleep(SLEEP_TIMEOUT + randomDigit * 1000);
+                                logger.debug("Sleep time: " + (SLEEP_TIMEOUT + randomDigit * 1000));
+                            } catch (InterruptedException ignored) {}
+                        }
                     } else {
                         logger.debug("Paused");
                         return;
