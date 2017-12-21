@@ -24,7 +24,7 @@ public class Manager extends Thread {
     @Override
     public void run() {
         wizard.setView(view);
-        wizard.initAuthorization(view);
+        wizard.initAuthorization();
 
         view.setManager(this);
         view.start();

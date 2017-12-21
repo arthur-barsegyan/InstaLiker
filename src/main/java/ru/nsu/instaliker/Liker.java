@@ -10,6 +10,7 @@ import org.jinstagram.entity.users.feed.MediaFeed;
 import org.jinstagram.entity.users.feed.MediaFeedData;
 import org.jinstagram.exceptions.InstagramException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -23,6 +24,12 @@ public class Liker implements Runnable {
     private Instagram instagram;
     private String targetHashTag;
     private List<MediaFeedData> mediaFeeds;
+    private ArrayList<String> likedMedia = new ArrayList<>();
+
+    // For tests only
+    public ArrayList<String> getLikedMedia() {
+        return likedMedia;
+    }
 
     enum LikerState {
         PAUSED,
@@ -42,7 +49,7 @@ public class Liker implements Runnable {
     private Long currentTask = 0L;
     private Integer currentSubTask = 0;
 
-    Liker(Instagram instagram) {
+    public Liker(Instagram instagram) {
         this.instagram = instagram;
     }
 
@@ -55,7 +62,7 @@ public class Liker implements Runnable {
         this.likeThreshold = likeThreshold;
     }
 
-    void setLikesCount(Integer likesCount) {
+    public void setLikesCount(Integer likesCount) {
         this.likesCount = likesCount;
     }
 
@@ -98,11 +105,12 @@ public class Liker implements Runnable {
             }
 
             Random random = new Random();
-            for (; currentTask < likesCount; currentTask++) {
-                for (; currentSubTask < mediaFeeds.size(); currentSubTask++) {
+            for (; currentTask < likesCount; ) {
+                for (; currentSubTask < mediaFeeds.size() && currentTask < likesCount; currentSubTask++, currentTask++) {
                     MediaFeedData feedData = mediaFeeds.get(currentSubTask);
                     if (state != LikerState.PAUSED && state != LikerState.CANCELED) {
                         instagram.setUserLike(feedData.getId());
+                        likedMedia.add(feedData.getId());
                         System.out.println(feedData.getLink());
 
                         try {
