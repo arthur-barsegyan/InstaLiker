@@ -20,6 +20,34 @@
         </plugins>
     </build>
 
+<<<<<<< Updated upstream
+=======
+    <profiles>
+        <profile>
+            <id>test-with-sonar-coverage</id>
+            <properties>
+                <sonar.host.url>http://84.237.50.237:8083</sonar.host.url>
+            </properties>
+            <build>
+                <defaultGoal>
+                    clean
+                    test
+                    sonar:sonar
+                </defaultGoal>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.codehaus.sonar</groupId>
+                            <artifactId>sonar-maven-plugin</artifactId>
+                            <version>3.4.0.905</version>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
+    </profiles>
+
+>>>>>>> Stashed changes
     <dependencies>
         <dependency>
             <groupId>com.sachinhandiekar</groupId>
