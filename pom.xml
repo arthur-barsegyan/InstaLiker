@@ -20,8 +20,6 @@
         </plugins>
     </build>
 
-<<<<<<< Updated upstream
-=======
     <profiles>
         <profile>
             <id>test-with-sonar-coverage</id>
@@ -47,7 +45,6 @@
         </profile>
     </profiles>
 
->>>>>>> Stashed changes
     <dependencies>
         <dependency>
             <groupId>com.sachinhandiekar</groupId>
