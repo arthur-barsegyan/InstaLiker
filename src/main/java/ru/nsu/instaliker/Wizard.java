@@ -20,27 +20,6 @@ public class Wizard {
     private ConsoleView view;
     private Instagram instagram;
 
-    private void print_content(HttpsURLConnection con){
-        if(con != null) {
-
-            try {
-                System.out.println("****** Content of the URL ********");
-                BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream()));
-                String input;
-
-                while ((input = br.readLine()) != null){
-                    System.out.println(input);
-                }
-
-                br.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        }
-
-    }
-
     public Instagram initAuthorization() {
 //        InstagramService service = new InstagramAuthService().apiKey(CLIENT_ID)
 //                                                            .apiSecret(CLIENT_SECRET)
