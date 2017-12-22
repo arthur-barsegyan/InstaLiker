@@ -10,11 +10,6 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.7.5.201505241946</version>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
@@ -24,6 +19,38 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>test-with-sonar-coverage</id>
+            <properties>
+                <sonar.host.url>http://84.237.50.237:8083</sonar.host.url>
+            </properties>
+            <build>
+                <defaultGoal>
+                    clean
+                    jacoco:prepare-agent
+                    test
+                    jacoco:report
+                    sonar:sonar
+                </defaultGoal>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.codehaus.sonar</groupId>
+                            <artifactId>sonar-maven-plugin</artifactId>
+                            <version>3.4.0.905</version>
+                        </plugin>
+                        <plugin>
+                            <groupId>org.jacoco</groupId>
+                            <artifactId>jacoco-maven-plugin</artifactId>
+                            <version>0.7.9</version>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
+    </profiles>
 
     <dependencies>
         <dependency>
